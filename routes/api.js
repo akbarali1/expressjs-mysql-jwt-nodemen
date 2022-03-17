@@ -1,16 +1,16 @@
 const express = require('express');
-const router = express.Router();
-const db = require('./dbConnection');
-const {signupValidation, loginValidation} = require('./validation');
+const api = express.Router();
+const db = require('../dbConnection');
+const {signupValidation, loginValidation} = require('../validation');
 const {validationResult} = require('express-validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-router.get('/', (req, res) => {
+api.get('/', (req, res) => {
     res.send('Hello World API');
 });
 
-router.post('/register', signupValidation, (req, res, next) => {
+api.post('/register', signupValidation, (req, res, next) => {
     db.query(
         `SELECT *
          FROM users
@@ -55,8 +55,7 @@ router.post('/register', signupValidation, (req, res, next) => {
     );
 });
 
-
-router.post('/login', loginValidation, (req, res, next) => {
+api.post('/login', loginValidation, (req, res, next) => {
     db.query(
         `SELECT *
          FROM users
@@ -108,9 +107,7 @@ router.post('/login', loginValidation, (req, res, next) => {
     );
 });
 
-router.post('/get-user', signupValidation, (req, res, next) => {
-
-
+api.post('/get-user', signupValidation, (req, res, next) => {
     if (
         !req.headers.authorization ||
         !req.headers.authorization.startsWith('Bearer') ||
@@ -126,11 +123,14 @@ router.post('/get-user', signupValidation, (req, res, next) => {
 
     db.query('SELECT * FROM users where id=?', decoded.id, function (error, results, fields) {
         if (error) throw error;
-        return res.send({error: false, data: results[0], message: 'Fetch Successfully.'});
+        return res.send({
+            error: false,
+            data: results[0],
+            message: 'Fetch Successfully.'
+        });
     });
-
 
 });
 
 
-module.exports = router;
+module.exports = api;

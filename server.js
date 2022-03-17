@@ -3,7 +3,8 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const indexRouter = require('./router.js');
+const apiRouter = require('./routes/api');
+const webRouter = require('./routes/web');
 
 const app = express();
 
@@ -17,11 +18,8 @@ app.use(bodyParser.urlencoded({
 
 app.use(cors());
 
-app.get('/', (req, res) => {
-    res.send('Hello World Web!')
-});
-
-app.use('/api', indexRouter);
+app.use('/api', apiRouter);
+app.use('/', webRouter);
 
 // Handling Errors
 app.use((err, req, res, next) => {
